@@ -143,11 +143,24 @@ export default function Home({ navigation }) {
     const [points, setPoints] = useState([])
     const [to_add, set_to_add] = useState(true)
     const [curr_idx, set_idx] = useState(1)
-    
+    const editGrain = (newText, index) => {
+        setGrains((curr_grains) => {
+            let copy_array = curr_grains.slice()
+            copy_array[index].text = newText
+            return copy_array
+        })
+    }
     const add_grain = (grain_text) => {
         
         setGrains((curr_grains) => ([ { text: grain_text, key: curr_idx, hash: cyrb53(grain_text) }, ...curr_grains]))
     }
+    const deleteGrain = (index) => {
+        setGrains((curr_grains) => {
+            let copy_array = curr_grains.slice()
+            copy_array.splice(index, 1)
+            return copy_array
+        })
+    } 
     const undoSelectedPoint = (hash) => {
         if (points.length && points.at(-1) !== hash) return
         setPoints((points) => (points.slice(0, -1)))
@@ -212,20 +225,8 @@ export default function Home({ navigation }) {
                                     addSelectPoint(item.hash)
                                 }
                             }}
-                            deleteGrain={() => {
-                                setGrains((curr_grains) => {
-                                    let copy_array = curr_grains.slice()
-                                    copy_array.splice(index, 1)
-                                    return copy_array
-                                })
-                            } }
-                            editGrain={(newText) => {
-                                setGrains((curr_grains) => {
-                                    let copy_array = curr_grains.slice()
-                                    copy_array[index].text = newText
-                                    return copy_array
-                                })
-                            }} />}
+                            deleteGrain={() => deleteGrain(index)}
+                            editGrain={(newtext) => editGrain( index, newtext)} />}
             />
         </View>
     )
