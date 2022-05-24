@@ -15,6 +15,36 @@ const styles = StyleSheet.create({
 })
 
 export default function Analyse ({navigation}) {
+    const data_2 = [
+        {
+            month: new Date(2015, 0, 1),
+            apples: 3840,
+            bananas: 1920,
+            cherries: 960,
+            dates: 400,
+        },
+        {
+            month: new Date(2015, 1, 1),
+            apples: 1600,
+            bananas: 1440,
+            cherries: 960,
+            dates: 400,
+        },
+        {
+            month: new Date(2015, 2, 1),
+            apples: 640,
+            bananas: 960,
+            cherries: 3640,
+            dates: 400,
+        },
+        {
+            month: new Date(2015, 3, 1),
+            apples: 3320,
+            bananas: 480,
+            cherries: 640,
+            dates: 400,
+        },
+    ]
     const chartConfig = {
         backgroundColor: "#e26a00",
         backgroundGradientFrom: "#fb8c00",
@@ -49,6 +79,15 @@ export default function Analyse ({navigation}) {
               width={screenWidth}
               height={220}
               chartConfig={chartConfig}
+            />
+            <StackedAreaChart
+                style={{ height: 200, paddingVertical: 16 }}
+                data={data_2}
+                keys={keys}
+                colors={colors}
+                curve={shape.curveNatural}
+                showGrid={false}
+                svgs={svgs}
             />
             
         </View>
