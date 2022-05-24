@@ -82,7 +82,7 @@ const cyrb53 = function(str, seed = 0) {
     return 4294967296 * (2097151 & h2) + (h1>>>0);
 };
 
-const UnderRight = ({ undoSelect, deleteGrain, editGrain }) => {
+const UnderRight = ({ undoSelect, deleteGrain, editGrain, initText }) => {
     const [editing, setEditing] = useState(false)
     return (
         <View style={styles.palette_view_under_right}>
@@ -99,6 +99,8 @@ const UnderRight = ({ undoSelect, deleteGrain, editGrain }) => {
                 editing
                     ?
                     <TextInput
+                        defaultValue={initText}
+                        autoFocus={true}
                         style = {styles.grain_edit_textinput}
                         onSubmitEditing={(event) => {
                             editGrain(event.nativeEvent.text)
@@ -122,7 +124,7 @@ const Grain = ({ text, swap_with_top, ...options }) => {
         <GestureHandlerRootView>
 
             <Swipeable
-                renderRightActions={() => <UnderRight {...options} />}
+                renderRightActions={() => <UnderRight {...options} initText={text} />}
                 renderLeftActions={() => <UnderLeft />}
                 onSwipeableWillClose={swap_with_top}
             >
@@ -137,44 +139,9 @@ const Grain = ({ text, swap_with_top, ...options }) => {
         </GestureHandlerRootView>
     )
 }
-export default function Home({ navigation }) {
-    const [grains, setGrains] = useState([])
-    // const [grain_dictionary, setGD] = useState({})
-    const [points, setPoints] = useState([])
+export default function Home({ navigation, grains, editGrain, add_grain, deleteGrain, undoSelectedPoint, addSelectPoint }) {
     const [to_add, set_to_add] = useState(true)
     const [curr_idx, set_idx] = useState(1)
-    const editGrain = (newText, index) => {
-        setGrains((curr_grains) => {
-            let copy_array = curr_grains.slice()
-            copy_array[index].text = newText
-            return copy_array
-        })
-    }
-    const add_grain = (grain_text) => {
-        
-        setGrains((curr_grains) => ([ { text: grain_text, key: curr_idx, hash: cyrb53(grain_text) }, ...curr_grains]))
-    }
-    const deleteGrain = (index) => {
-        setGrains((curr_grains) => {
-            let copy_array = curr_grains.slice()
-            copy_array.splice(index, 1)
-            return copy_array
-        })
-    } 
-    const undoSelectedPoint = (hash) => {
-        if (points.length && points.at(-1) !== hash) return
-        setPoints((points) => (points.slice(0, -1)))
-    }
-    const addSelectPoint = (hash) => {
-        const ind = grains.findIndex((grain) => (grain.hash===hash))
-        
-        const grains_copy = grains.slice()
-        const temp = grains[0]
-        grains_copy[0] = grains_copy[ind]
-        grains_copy[ind] = temp
-        setGrains(grains_copy)
-        setPoints((points) => ([...points, { ts: new Date(), hash: hash }]))
-    }
     return (
         <View style={styles.container}>
             <View style={styles.upper_section}>
@@ -226,7 +193,7 @@ export default function Home({ navigation }) {
                                 }
                             }}
                             deleteGrain={() => deleteGrain(index)}
-                            editGrain={(newtext) => editGrain( index, newtext)} />}
+                            editGrain={(newtext) => editGrain( newtext, index)} />}
             />
         </View>
     )
